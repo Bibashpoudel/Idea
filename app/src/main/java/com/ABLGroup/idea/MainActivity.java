@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -96,9 +97,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isComplete()){
+
+                            //send verifaction on email if correct email is used
+
+                            firebaseAuth.getCurrentUser().sendEmailVerification()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isComplete()){
+                                                Toast.makeText(MainActivity.this,"Register sucessfully please check your email",Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(MainActivity.this, Login.class));
+                                            }
+                                            else{
+                                                Toast.makeText(MainActivity.this, task.getException().getMessage(),
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                             //user is sucessfullllllly register and login using startactivity
 
-                            Toast.makeText(MainActivity.this,"Register sucessfully",Toast.LENGTH_SHORT).show();
+
                         }
                         else{
                             Toast.makeText(MainActivity.this,"Register Failed... Try again",Toast.LENGTH_SHORT).show();
